@@ -1,7 +1,8 @@
 package org.piphonom.arepa.validator;
 
 import org.piphonom.arepa.dao.dataset.Customer;
-import org.piphonom.arepa.service.RegistrationService;
+import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.service.CustomerService;
 import org.piphonom.arepa.web.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import org.springframework.validation.Validator;
 @Component
 public class UserValidator implements Validator {
     @Autowired
-    private RegistrationService registrationService;
+    private CustomerService registrationService;
 
     @Override
     public boolean supports(Class<?> aClass) {
@@ -30,9 +31,10 @@ public class UserValidator implements Validator {
         if (userForm.getUsername().length() < 6 || userForm.getUsername().length() > 32) {
             errors.rejectValue("username", "Size.userForm.username");
         }
-        if (registrationService.findByEmail(userForm.getEmail()) != null) {
+        try {
+            registrationService.findByEmail(userForm.getEmail());
             errors.rejectValue("email", "Duplicate.userForm.email");
-        }
+        } catch (UserNotFoundException e) {}
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
         if (userForm.getPassword().length() < 8 || userForm.getPassword().length() > 32) {

@@ -9,8 +9,7 @@ public class UserForm {
     private String passwordConfirm;
     private String email;
 
-    public UserForm() {
-    }
+    public UserForm() {}
 
     public String getUsername() {
         return username;
