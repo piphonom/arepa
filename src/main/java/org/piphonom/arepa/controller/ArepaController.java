@@ -7,7 +7,7 @@ import org.piphonom.arepa.exceptions.UserNotFoundException;
 import org.piphonom.arepa.service.GroupService;
 import org.piphonom.arepa.service.CustomerService;
 import org.piphonom.arepa.service.SecurityService;
-import org.piphonom.arepa.validator.UserValidator;
+import org.piphonom.arepa.validator.CustomerValidator;
 import org.piphonom.arepa.web.NewGroupForm;
 import org.piphonom.arepa.web.UserForm;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class ArepaController {
     private SecurityService securityService;
 
     @Autowired
-    private UserValidator userValidator;
+    private CustomerValidator customerValidator;
 
     @Autowired
     private GroupService groupService;
@@ -51,7 +51,7 @@ public class ArepaController {
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public String registration(@ModelAttribute("userForm") UserForm userForm, BindingResult bindingResult, Model model) {
-        userValidator.validate(userForm, bindingResult);
+        customerValidator.validate(userForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "registration";
