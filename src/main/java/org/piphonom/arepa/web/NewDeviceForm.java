@@ -3,10 +3,19 @@ package org.piphonom.arepa.web;
 /**
  * Created by piphonom
  */
-public class NewGroupForm {
+public class NewDeviceForm {
     private String groupName;
+    private String deviceName;
 
-    public NewGroupForm() {}
+    public NewDeviceForm() {}
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
 
     public String getGroupName() {
         return groupName;

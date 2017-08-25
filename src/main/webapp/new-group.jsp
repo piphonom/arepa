@@ -30,11 +30,11 @@
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <h2 class="form-signin-heading">Create group</h2>
         <div class="form-group col-xs-4">
-            <spring:bind path="groupname">
+            <spring:bind path="groupName">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <form:input type="text" path="groupname" class="form-control" placeholder="Group Name"
+                    <form:input type="text" path="groupName" class="form-control" placeholder="Group Name"
                                 autofocus="true"></form:input>
-                    <form:errors path="groupname"></form:errors>
+                    <form:errors path="groupName"></form:errors>
                 </div>
             </spring:bind>
             <button class="btn btn-primary btn-md" type="submit">Submit</button>

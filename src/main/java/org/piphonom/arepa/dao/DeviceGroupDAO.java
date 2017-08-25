@@ -13,4 +13,5 @@ import java.util.List;
 @Transactional
 public interface DeviceGroupDAO extends CrudRepository<DeviceGroup, Integer> {
     public List<DeviceGroup> findByOwnerCustomerRef(Customer customer);
+    public DeviceGroup findByOwnerCustomerRefAndName(Customer customer, String name);
 }

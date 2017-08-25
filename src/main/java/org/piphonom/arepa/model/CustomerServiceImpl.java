@@ -1,8 +1,9 @@
-package org.piphonom.arepa.service;
-
+package org.piphonom.arepa.model;
 
 import org.piphonom.arepa.dao.CustomerDAO;
 import org.piphonom.arepa.dao.dataset.Customer;
+import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
  * Created by piphonom
  */
 @Service
-public class RegistrationServiceImpl implements RegistrationService {
+public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerDAO customerDAO;
     @Autowired
@@ -24,7 +25,11 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public Customer findByEmail(String email) {
-        return customerDAO.findByEmail(email);
+    public Customer findByEmail(String email) throws UserNotFoundException {
+        Customer customer =  customerDAO.findByEmail(email);
+        if (customer == null) {
+            throw new UserNotFoundException();
+        }
+        return customer;
     }
 }

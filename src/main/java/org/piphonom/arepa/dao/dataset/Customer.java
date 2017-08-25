@@ -1,6 +1,8 @@
 package org.piphonom.arepa.dao.dataset;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by piphonom
@@ -8,23 +10,22 @@ import javax.persistence.*;
 @Entity
 @Table(name = "Customer")
 public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idCustomer")
+
     private Integer idCustomer;
-    @Column(name = "email")
     private String email;
-    @Column(name = "name")
     private String name;
-    @Column(name = "token")
     private String token;
-    @Column(name = "passhash")
     private String password;
+
+    private List<DeviceGroup> groups = new ArrayList<>();
 
     public Customer() {
 
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idCustomer")
     public Integer getIdCustomer() {
         return idCustomer;
     }
@@ -57,11 +58,25 @@ public class Customer {
         this.token = token;
     }
 
+    @Column(name = "passhash")
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "DeviceGroup",
+            joinColumns = @JoinColumn(name = "ownerCustomerRef"),
+            inverseJoinColumns = @JoinColumn(name = "idDeviceGroup")
+    )
+    public List<DeviceGroup> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<DeviceGroup> groups) {
+        this.groups = groups;
     }
 }

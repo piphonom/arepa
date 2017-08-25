@@ -1,13 +1,18 @@
 package org.piphonom.arepa.controller;
 
 import org.piphonom.arepa.dao.dataset.Customer;
+import org.piphonom.arepa.dao.dataset.Device;
 import org.piphonom.arepa.dao.dataset.DeviceGroup;
+import org.piphonom.arepa.exceptions.DeviceExistsException;
 import org.piphonom.arepa.exceptions.GroupExistsException;
+import org.piphonom.arepa.exceptions.GroupNotExistsException;
 import org.piphonom.arepa.exceptions.UserNotFoundException;
-import org.piphonom.arepa.service.GroupService;
 import org.piphonom.arepa.service.CustomerService;
+import org.piphonom.arepa.service.DeviceService;
+import org.piphonom.arepa.service.GroupService;
 import org.piphonom.arepa.service.SecurityService;
 import org.piphonom.arepa.validator.CustomerValidator;
+import org.piphonom.arepa.web.NewDeviceForm;
 import org.piphonom.arepa.web.NewGroupForm;
 import org.piphonom.arepa.web.UserForm;
 import org.slf4j.Logger;
@@ -19,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +33,7 @@ import java.util.List;
  * Created by piphonom
  */
 @Controller
-public class ArepaController {
-    @Autowired
-    private CustomerService customerService;
-
+public class ArepaWebController {
     @Autowired
     private SecurityService securityService;
 
@@ -38,9 +41,15 @@ public class ArepaController {
     private CustomerValidator customerValidator;
 
     @Autowired
+    private CustomerService customerService;
+
+    @Autowired
     private GroupService groupService;
 
-    private static final Logger logger = LoggerFactory.getLogger(ArepaController.class);
+    @Autowired
+    private DeviceService deviceService;
+
+    private static final Logger logger = LoggerFactory.getLogger(ArepaWebController.class);
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registration(Model model) {
@@ -84,7 +93,7 @@ public class ArepaController {
     public String groups(Model model) {
         List<DeviceGroup> deviceGroups;
         try {
-            deviceGroups = groupService.getGroups(getCustomer());
+            deviceGroups = getCustomer().getGroups();
         } catch (UserNotFoundException e) {
             deviceGroups = new ArrayList<>();
             e.printStackTrace();
@@ -97,20 +106,58 @@ public class ArepaController {
     @RequestMapping(value = "/new-group", method = RequestMethod.GET)
     public String newGroup(Model model) {
         model.addAttribute("newGroupForm", new NewGroupForm());
-
-        return "/new-group";
+        return "new-group";
     }
 
     @RequestMapping(value = "/new-group", method = RequestMethod.POST)
     public String newGroup(@ModelAttribute("newGroupForm") NewGroupForm newGroupForm, BindingResult bindingResult, Model model) {
         try {
-            groupService.createNewGroup(getCustomer(), newGroupForm.getGroupname());
+            DeviceGroup group = groupService.createGroup(getCustomer(), newGroupForm.getGroupName());
+            groupService.save(group);
         } catch (UserNotFoundException | GroupExistsException e) {
-            bindingResult.rejectValue("groupname", e.getMessage());
+            e.printStackTrace();
+            bindingResult.rejectValue("groupName", e.getMessage());
             return "new-group";
         }
 
         return "redirect:/groups";
+    }
+
+    @RequestMapping(value = "/edit-group", method = RequestMethod.GET)
+    public String editGroup(Model model, @ModelAttribute("groupName") String groupName, BindingResult bindingResult) {
+        try {
+            DeviceGroup group = groupService.getGroupByName(getCustomer(), groupName);
+            List<Device> actualDevices = group.getDevices();
+            model.addAttribute("devicesList", actualDevices);
+        } catch (GroupNotExistsException | UserNotFoundException e) {
+            e.printStackTrace();
+            bindingResult.rejectValue("error", e.getMessage());
+            return "groups";
+        }
+        return "edit-group";
+    }
+
+    @RequestMapping(value = "/new-device", method = RequestMethod.GET)
+    public String newDevice(Model model, @ModelAttribute("groupName") String groupName) {
+        NewDeviceForm deviceForm = new NewDeviceForm();
+        deviceForm.setGroupName(groupName);
+        model.addAttribute("newDeviceForm", deviceForm);
+        return "new-device";
+    }
+
+    @RequestMapping(value = "/new-device", method = RequestMethod.POST)
+    public String newDevice(@ModelAttribute("newDeviceForm") NewDeviceForm newDeviceForm, BindingResult bindingResult, RedirectAttributes redirectAttrs) {
+        try {
+            DeviceGroup group = groupService.getGroupByName(getCustomer(), newDeviceForm.getGroupName());
+            Device device = deviceService.createDevice(group, newDeviceForm.getDeviceName());
+            deviceService.save(device);
+        } catch (GroupNotExistsException | UserNotFoundException | DeviceExistsException e) {
+            e.printStackTrace();
+            bindingResult.rejectValue("deviceName", e.getMessage());
+            return "new-device";
+        }
+        redirectAttrs.addAttribute("groupName", newDeviceForm.getGroupName());
+        return "redirect:/edit-group";
     }
 
     private Customer getCustomer() throws UserNotFoundException {

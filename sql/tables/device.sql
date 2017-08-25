@@ -2,7 +2,10 @@ use `arepa`;
 
 CREATE TABLE `Device` (
   `idDevice` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
   `pubId` varchar(45) DEFAULT NULL,
+  `state` varchar(45) DEFAULT NULL,
+  `creationTime` datetime DEFAULT NULL,
   `deviceGroupRef` int(11) DEFAULT NULL,
   `certificateRef` int(11) DEFAULT NULL,
   PRIMARY KEY (`idDevice`),

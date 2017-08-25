@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <Customer idCustomer="0" email="test@me.com" name="test customer" passhash="passpass" token="token"/>
+    <DeviceGroup idDeviceGroup="0" ownerCustomerRef="0" name="groupName" certificateCA="certificate" isDeactivated="0"/>
+</dataset>

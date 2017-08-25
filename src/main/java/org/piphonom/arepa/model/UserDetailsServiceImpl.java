@@ -1,4 +1,4 @@
-package org.piphonom.arepa.service;
+package org.piphonom.arepa.model;
 
 
 import org.piphonom.arepa.dao.CustomerDAO;

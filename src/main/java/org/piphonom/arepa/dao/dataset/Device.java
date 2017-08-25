@@ -1,6 +1,7 @@
 package org.piphonom.arepa.dao.dataset;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
  * Created by piphonom
@@ -9,9 +10,19 @@ import javax.persistence.*;
 @Table(name = "Device")
 public class Device {
     private String idDevice;
+    private String name;
     private String pubId;
+    private State state;
+    private Timestamp creationTime;
     private DeviceGroup deviceGroupRef;
     private Certificate certificateRef;
+
+    public enum State {
+        CREATED,        /* created but not activated */
+        ACTIVE,         /* activated */
+        INACTIVE,       /* not activated in appropriate time */
+        REMOVED         /* removed by group's owner */
+    }
 
     public Device() {}
 
@@ -26,13 +37,20 @@ public class Device {
         this.idDevice = idDevice;
     }
 
-
     public String getPubId() {
         return pubId;
     }
 
     public void setPubId(String pubId) {
         this.pubId = pubId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @ManyToOne
@@ -53,5 +71,22 @@ public class Device {
 
     public void setCertificateRef(Certificate certificateRef) {
         this.certificateRef = certificateRef;
+    }
+
+    @Enumerated(EnumType.STRING)
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public Timestamp getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Timestamp creationTime) {
+        this.creationTime = creationTime;
     }
 }

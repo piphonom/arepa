@@ -2,6 +2,8 @@ use `arepa`;
 
 CREATE TABLE `DeviceToken` (
   `idDeviceToken` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `token` varchar(45) DEFAULT NULL,
   `creationTime` datetime DEFAULT NULL,
   `deviceGroupRef` int(11) DEFAULT NULL,
   PRIMARY KEY (`idDeviceToken`),

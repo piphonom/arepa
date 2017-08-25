@@ -3,6 +3,8 @@ package org.piphonom.arepa.dao.dataset;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by piphonom
@@ -18,6 +20,8 @@ public class DeviceGroup {
     private byte[] certificateCA;
 
     private Boolean isDeactivated;
+
+    private List<Device> devices = new ArrayList<>();
 
     public DeviceGroup() {}
 
@@ -66,5 +70,17 @@ public class DeviceGroup {
 
     public void setDeactivated(Boolean deactivated) {
         isDeactivated = deactivated;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "Device",
+               joinColumns = @JoinColumn(name = "deviceGroupRef"),
+               inverseJoinColumns = @JoinColumn(name = "idDevice"))
+    public List<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
     }
 }

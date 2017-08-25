@@ -38,6 +38,11 @@
                             ${message}
                         </div>
         </c:if>
+        <c:if test="${not empty error}">
+                        <div class="alert alert-warning">
+                            ${error}
+                        </div>
+        </c:if>
         <form action="/groups" method="POST" id="groupsForm" role="form" >
             <input type="hidden" id="groupName" name="groupName">
             <input type="hidden" id="action" name="action">
@@ -57,7 +62,7 @@
                             <tr class="${classSucess}">
                                 <c:choose>
                                     <c:when test="${not group.deactivated}">
-                                        <td><a href="/groups?groupName=${group.name}&searchAction=searchByName">${group.name}</a></td>
+                                        <td><a href="/edit-group?groupName=${group.name}">${group.name}</a></td>
                                         <td>Active</td>
                                         <td><a href="#" id="remove"
                                                onclick="document.getElementById('action').value = 'remove';document.getElementById('groupName').value = '${group.name}';

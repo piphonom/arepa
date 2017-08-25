@@ -1,6 +1,7 @@
-package org.piphonom.arepa.service;
+package org.piphonom.arepa.model;
 
 import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.service.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
  * Created by piphonom
  */
 @Service
-public class SecurityServiceImpl implements SecurityService{
+public class SecurityServiceImpl implements SecurityService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
