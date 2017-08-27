@@ -1,6 +1,5 @@
 package org.piphonom.arepa.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -24,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,7 +50,7 @@ public class DeviceRestTest {
 
     @Test
     public void getName() throws Exception {
-        MockHttpServletResponse response = this.mockMvc.perform(post("/customer/register/")
+        MockHttpServletResponse response = this.mockMvc.perform(get("/point/name/" + pubId)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -61,15 +60,5 @@ public class DeviceRestTest {
         assertNotNull(content);
         String name = JsonPath.read(content, "$.name");
         assertEquals(expectedName, name);
-    }
-
-    private static String asJsonString(final Object obj) {
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            final String jsonContent = mapper.writeValueAsString(obj);
-            return jsonContent;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
