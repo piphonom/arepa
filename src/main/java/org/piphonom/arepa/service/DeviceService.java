@@ -3,6 +3,7 @@ package org.piphonom.arepa.service;
 import org.piphonom.arepa.dao.dataset.Device;
 import org.piphonom.arepa.dao.dataset.DeviceGroup;
 import org.piphonom.arepa.exceptions.DeviceExistsException;
+import org.piphonom.arepa.exceptions.DeviceNotExistsException;
 
 /**
  * Created by piphonom
@@ -24,6 +25,21 @@ public interface DeviceService {
      * @return created device
      * @throws DeviceExistsException
      */
-
     Device createDevice(DeviceGroup group, String name) throws DeviceExistsException;
+
+    /**
+     * Retrieves device by it's public ID
+     * @param pubId
+     * @return
+     * @throws DeviceNotExistsException
+     */
+    Device getDeviceByPublicId(String pubId) throws DeviceNotExistsException;
+
+    /**
+     * Register device in the group
+     * @param pubId
+     * @return
+     * @throws DeviceNotExistsException
+     */
+    Device registerDevice(String pubId) throws RuntimeException;
 }

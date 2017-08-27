@@ -10,5 +10,5 @@ import javax.transaction.Transactional;
  */
 @Transactional
 public interface DeviceDAO extends CrudRepository<Device, Integer> {
-
+    Device getByPubId(String pubId);
 }

@@ -5,7 +5,9 @@ import org.piphonom.arepa.dao.DeviceDAO;
 import org.piphonom.arepa.dao.dataset.Device;
 import org.piphonom.arepa.dao.dataset.DeviceGroup;
 import org.piphonom.arepa.exceptions.DeviceExistsException;
+import org.piphonom.arepa.exceptions.DeviceNotExistsException;
 import org.piphonom.arepa.service.DeviceService;
+import org.piphonom.arepa.service.PKIService;
 import org.piphonom.arepa.service.PubIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     PubIdGenerator pubIdGenerator;
 
+    @Autowired
+    PKIService pkiService;
+
     @Override
     public Device save(Device device) {
         return deviceDAO.save(device);
@@ -35,12 +40,27 @@ public class DeviceServiceImpl implements DeviceService {
             throw new DeviceExistsException();
         }
         Device device = new Device();
-        /* TODO: set initial state */
         device.setName(name);
         device.setCreationTime(new Timestamp(System.currentTimeMillis()));
         device.setPubId(pubIdGenerator.createNew());
         device.setState(Device.State.CREATED);
         device.setDeviceGroupRef(group);
+        return device;
+    }
+
+    @Override
+    public Device getDeviceByPublicId(String pubId) throws DeviceNotExistsException {
+        Device device = deviceDAO.getByPubId(pubId);
+        if (device == null) {
+            throw new DeviceNotExistsException();
+        }
+        return device;
+    }
+
+    @Override
+    public Device registerDevice(String pubId) throws RuntimeException {
+        Device device = getDeviceByPublicId(pubId);
+        /* TODO: generate certificate */
         return device;
     }
 }

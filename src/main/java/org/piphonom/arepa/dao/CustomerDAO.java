@@ -15,18 +15,18 @@ public interface CustomerDAO extends CrudRepository<Customer, Integer> {
      *
      * @param name the customer email.
      */
-    public Customer findByName(String name);
+    Customer findByName(String name);
     /**
      * Return the customer having the passed email or null if no customer is found.
      *
      * @param email the customer email.
      */
-    public Customer findByEmail(String email);
+    Customer findByEmail(String email);
 
     /**
      * Return the customer having the passed token or null if no customer is found.
      *
      * @param token the customer token.
      */
-    public Customer findByToken(String token);
+    Customer findByToken(String token);
 }

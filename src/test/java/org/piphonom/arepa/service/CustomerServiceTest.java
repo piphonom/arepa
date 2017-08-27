@@ -25,6 +25,10 @@ import org.springframework.validation.MapBindingResult;
 
 import java.util.HashMap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 
 /**
  * Created by piphonom
@@ -57,10 +61,10 @@ public class CustomerServiceTest {
         try {
             savedCustomer = customerService.findByEmail(email);
         } catch (UserNotFoundException e) {
-            Assert.fail();
+            fail();
         }
-        Assert.assertEquals(email, savedCustomer.getEmail());
-        Assert.assertEquals(name, savedCustomer.getName());
+        assertEquals(email, savedCustomer.getEmail());
+        assertEquals(name, savedCustomer.getName());
     }
 
     @Test
@@ -72,6 +76,6 @@ public class CustomerServiceTest {
         duplicateUser.setPasswordConfirm(pass);
         BindingResult errors = new MapBindingResult(new HashMap<String, String>(), "testBinding");
         validator.validate(duplicateUser, errors);
-        Assert.assertTrue(errors.hasErrors());
+        assertTrue(errors.hasErrors());
     }
 }

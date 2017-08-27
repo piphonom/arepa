@@ -10,7 +10,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.piphonom.arepa.dao.dataset.Customer;
+import org.piphonom.arepa.dao.dataset.DeviceGroup;
 import org.piphonom.arepa.exceptions.GroupExistsException;
+import org.piphonom.arepa.exceptions.GroupNotExistsException;
 import org.piphonom.arepa.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by piphonom
@@ -50,14 +55,17 @@ public class GroupServiceTest {
 
     @Test
     public void createNewGroup() {
+        final String groupName = "newGroupName";
         Customer customer = getCustomer();
         try {
-            groupService.createGroup(customer, "newGroupName");
-        } catch (GroupExistsException e) {
+            DeviceGroup group = groupService.createGroup(customer, groupName);
+            groupService.save(group);
+            DeviceGroup createdGroup = groupService.getGroupByName(customer, groupName);
+            assertEquals(groupName, createdGroup.getName());
+        } catch (GroupExistsException | GroupNotExistsException e) {
             e.printStackTrace();
-            Assert.fail();
+            fail(e.getMessage());
         }
-
     }
 
     @Test
@@ -73,7 +81,7 @@ public class GroupServiceTest {
             customer = customerService.findByEmail(email);
         } catch (UserNotFoundException e) {
             e.printStackTrace();
-            Assert.fail();
+            fail();
         }
         return customer;
     }
