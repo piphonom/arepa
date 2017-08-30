@@ -36,9 +36,6 @@ import java.nio.file.Paths;
 public class PKITest {
     protected static final String DATASET = "classpath:dbunit/device.xml";
 
-    @Autowired
-    PKIService pkiService;
-
     private final String REQUEST_FILE = "classpath:csr/TestDevice.csr";
 
     @Test

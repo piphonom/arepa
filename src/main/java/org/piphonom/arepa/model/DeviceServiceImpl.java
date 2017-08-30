@@ -7,7 +7,6 @@ import org.piphonom.arepa.dao.dataset.DeviceGroup;
 import org.piphonom.arepa.exceptions.DeviceExistsException;
 import org.piphonom.arepa.exceptions.DeviceNotExistsException;
 import org.piphonom.arepa.service.DeviceService;
-import org.piphonom.arepa.service.PKIService;
 import org.piphonom.arepa.service.PubIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +24,6 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     PubIdGenerator pubIdGenerator;
-
-    @Autowired
-    PKIService pkiService;
 
     @Override
     public Device save(Device device) {

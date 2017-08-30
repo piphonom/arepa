@@ -2,6 +2,7 @@ package org.piphonom.arepa.service;
 
 import org.piphonom.arepa.dao.dataset.Customer;
 import org.piphonom.arepa.dao.dataset.DeviceGroup;
+import org.piphonom.arepa.exceptions.CertificateGenerationException;
 import org.piphonom.arepa.exceptions.GroupExistsException;
 import org.piphonom.arepa.exceptions.GroupNotExistsException;
 
@@ -23,8 +24,9 @@ public interface GroupService {
      * @param groupName
      * @return new group
      * @throws GroupExistsException if group with this name already exists for the customer
+     * @throws CertificateGenerationException if group CA generation occurs
      */
-    DeviceGroup createGroup(Customer customer, String groupName) throws GroupExistsException;
+    DeviceGroup createGroup(Customer customer, String groupName) throws GroupExistsException, CertificateGenerationException;
 
     /**
      * Get group with specified name
