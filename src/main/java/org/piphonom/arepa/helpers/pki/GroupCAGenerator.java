@@ -3,6 +3,7 @@ package org.piphonom.arepa.helpers.pki;
 import org.piphonom.arepa.exceptions.CertificateGenerationException;
 import org.piphonom.arepa.service.CAGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -11,6 +12,7 @@ import java.security.cert.X509Certificate;
 /**
  * Created by piphonom
  */
+@Component
 public class GroupCAGenerator implements CAGenerator {
 
     @Autowired

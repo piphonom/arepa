@@ -2,6 +2,8 @@
 <dataset>
     <Customer idCustomer="0" email="test@me.com" name="test customer" passhash="passpass" token="token"/>
     <DeviceGroup idDeviceGroup="0" ownerCustomerRef="0" name="groupName" certificateCA="certificate" isDeactivated="0"/>
+    <Certificate idCertificate="0" value="value" serialNumber="1" deviceGroupRef="0" isRevoked="0"/>
+    <!--
     <Device idDevice="0" name="deviceName" pubId="2f4f" state="CREATED" creationTime="2017-08-27 21:13:19" deviceGroupRef="0" certificateRef="0"/>
-    <Certificate idCertificate="0" value="" serialNumber="1" deviceGroupRef="0" isRevoked="0"/>
+    -->
 </dataset>

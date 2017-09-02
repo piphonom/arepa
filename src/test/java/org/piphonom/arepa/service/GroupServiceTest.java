@@ -11,6 +11,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.piphonom.arepa.dao.dataset.Customer;
 import org.piphonom.arepa.dao.dataset.DeviceGroup;
+import org.piphonom.arepa.exceptions.CertificateGenerationException;
 import org.piphonom.arepa.exceptions.GroupExistsException;
 import org.piphonom.arepa.exceptions.GroupNotExistsException;
 import org.piphonom.arepa.exceptions.UserNotFoundException;
@@ -62,14 +63,14 @@ public class GroupServiceTest {
             groupService.save(group);
             DeviceGroup createdGroup = groupService.getGroupByName(customer, groupName);
             assertEquals(groupName, createdGroup.getName());
-        } catch (GroupExistsException | GroupNotExistsException e) {
+        } catch (GroupExistsException | GroupNotExistsException | CertificateGenerationException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
     }
 
     @Test
-    public void createDuplicateGroup() throws GroupExistsException {
+    public void createDuplicateGroup() throws GroupExistsException, CertificateGenerationException {
         Customer customer = getCustomer();
         exception.expect(GroupExistsException.class);
         groupService.createGroup(customer, existingGroupName);

@@ -46,11 +46,12 @@ public final class CommonPKI {
     private X509Certificate rootCACertificate;
 
     public CommonPKI() {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+
         /**
          * TODO: process properties depending on context
          */
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
             Properties properties = new Properties();
             properties.load(inputStream);
             String keyStoreLoaction = properties.getProperty("org.piphonom.arepa.rootca.location");

@@ -3,10 +3,7 @@ package org.piphonom.arepa.controller;
 import org.piphonom.arepa.dao.dataset.Customer;
 import org.piphonom.arepa.dao.dataset.Device;
 import org.piphonom.arepa.dao.dataset.DeviceGroup;
-import org.piphonom.arepa.exceptions.DeviceExistsException;
-import org.piphonom.arepa.exceptions.GroupExistsException;
-import org.piphonom.arepa.exceptions.GroupNotExistsException;
-import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.exceptions.*;
 import org.piphonom.arepa.service.CustomerService;
 import org.piphonom.arepa.service.DeviceService;
 import org.piphonom.arepa.service.GroupService;
@@ -114,7 +111,7 @@ public class ArepaWebController {
         try {
             DeviceGroup group = groupService.createGroup(getCustomer(), newGroupForm.getGroupName());
             groupService.save(group);
-        } catch (UserNotFoundException | GroupExistsException e) {
+        } catch (UserNotFoundException | GroupExistsException | CertificateGenerationException e) {
             e.printStackTrace();
             bindingResult.rejectValue("groupName", e.getMessage());
             return "new-group";

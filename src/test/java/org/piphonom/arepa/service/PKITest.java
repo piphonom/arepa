@@ -6,6 +6,9 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.piphonom.arepa.helpers.pki.CommonPKI;
+import org.piphonom.arepa.helpers.pki.GroupCAGenerator;
+import org.piphonom.arepa.helpers.pki.PKCS12ContentSaver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +20,15 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyPair;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 /**
  * Created by piphonom
@@ -36,7 +44,10 @@ import java.nio.file.Paths;
 public class PKITest {
     protected static final String DATASET = "classpath:dbunit/device.xml";
 
-    private final String REQUEST_FILE = "classpath:csr/TestDevice.csr";
+    private final String REQUEST_FILE = "src/test/resources/csr/TestDevice.csr";
+
+    @Autowired
+    GroupCAGenerator groupCAGenerator;
 
     @Test
     public void signCSRTest() {
@@ -47,6 +58,30 @@ public class PKITest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /* TODO: */
     }
+
+    /*
+    @Test
+    public void createTestRootCA() throws Exception {
+        groupCAGenerator.setCustomerEmail("piphonom")
+                        .setGroupName("otus")
+                        .setDaysValidity(365)
+                        .setKeySizeInBits(2048);
+
+        groupCAGenerator.generate();
+        KeyPair groupCaKeys = groupCAGenerator.getKeyPair();
+        X509Certificate groupCaCert = groupCAGenerator.getCertificate();
+        PKCS12ContentSaver saver = new PKCS12ContentSaver()
+                .setCertificateChain(new Certificate[] {groupCaCert})
+                .setPrivateKey(groupCaKeys.getPrivate())
+                .setKeyAlias("otus")
+                .setStorePassword("otus")
+                .setKeyPassword("otus");
+
+        OutputStream os = new FileOutputStream("src/test/resources/keystore/RootCA.pfx");
+        saver.saveToStream(os);
+        os.close();
+    }
+    */
+
 }
