@@ -6,11 +6,11 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.piphonom.arepa.helpers.pki.CommonPKI;
+import org.piphonom.arepa.dao.dataset.Customer;
+import org.piphonom.arepa.dao.dataset.Device;
+import org.piphonom.arepa.dao.dataset.DeviceGroup;
 import org.piphonom.arepa.helpers.pki.GroupCAGenerator;
-import org.piphonom.arepa.helpers.pki.PKCS12ContentSaver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,15 +20,13 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import java.io.FileOutputStream;
+import javax.transaction.Transactional;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.KeyPair;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by piphonom
@@ -47,10 +45,34 @@ public class PKITest {
     private final String REQUEST_FILE = "src/test/resources/csr/TestDevice.csr";
 
     @Autowired
-    GroupCAGenerator groupCAGenerator;
+    private GroupCAGenerator groupCAGenerator;
+
+    @Autowired
+    CustomerService customerService;
+
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private DeviceService deviceService;
 
     @Test
-    public void signCSRTest() {
+    @Transactional
+    public void signCSRTest() throws Exception {
+        final String GROUP_NAME = "signCSRTestGroup";
+        final String DEVICE_NAME = "signCSRTestDevice";
+
+        Customer customer = customerService.findByEmail(DBUnitConstants.CUSTOMER_EMAIL);
+
+        /* Create group at first */
+        DeviceGroup group = groupService.createGroup(customer, GROUP_NAME);
+        groupService.save(group);
+
+        /* Than create device */
+        Device device = deviceService.createDevice(group, DEVICE_NAME);
+        deviceService.save(device);
+
+        /* Then register it */
         Path path = Paths.get(REQUEST_FILE);
         byte[] csr = new byte[0];
         try {
@@ -58,9 +80,12 @@ public class PKITest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        byte[] certificate = deviceService.registerDevice(device.getPubId(), csr);
+        assertNotNull(certificate);
     }
 
     /*
+    // used to generate test RootCA
     @Test
     public void createTestRootCA() throws Exception {
         groupCAGenerator.setCustomerEmail("piphonom")

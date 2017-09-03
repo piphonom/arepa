@@ -29,6 +29,7 @@ public class Certificate {
         return serialNumber;
     }
 
+    @Column(name = "value", columnDefinition = "BLOB")
     public byte[] getValue() {
         return value;
     }

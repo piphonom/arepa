@@ -1,6 +1,6 @@
 package org.piphonom.arepa.model;
 
-import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.exceptions.UserNotExistsException;
 import org.piphonom.arepa.service.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class SecurityServiceImpl implements SecurityService {
     private static final Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
     @Override
-    public String findLoggedInUsername() throws UserNotFoundException {
+    public String findLoggedInUsername() throws UserNotExistsException {
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
         if (userDetails instanceof UserDetails) {
             return ((UserDetails)userDetails).getUsername();
@@ -36,7 +36,7 @@ public class SecurityServiceImpl implements SecurityService {
             if (userDetails instanceof User)
                 return ((User)userDetails).getUsername();
         }
-        throw new UserNotFoundException();
+        throw new UserNotExistsException();
     }
 
     @Override

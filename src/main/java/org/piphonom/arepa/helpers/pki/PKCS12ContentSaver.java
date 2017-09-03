@@ -8,7 +8,7 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
 /**
- * Created by lesha on 01.06.17.
+ * Created by piphonom
  */
 public final class PKCS12ContentSaver {
     PrivateKey privateKey = null;

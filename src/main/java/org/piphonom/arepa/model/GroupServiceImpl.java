@@ -12,6 +12,7 @@ import org.piphonom.arepa.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.security.cert.CertificateEncodingException;
 import java.util.List;
 import java.util.Queue;
@@ -28,6 +29,9 @@ import java.util.stream.Collectors;
 public class GroupServiceImpl implements GroupService {
     @Autowired
     private DeviceGroupDAO groupDAO;
+
+    @Autowired
+    GroupCAGenerator groupCAGenerator;
 
     /**
      * TODO: make MBean to control these values
@@ -65,10 +69,15 @@ public class GroupServiceImpl implements GroupService {
         newGroup.setName(groupName);
         newGroup.setDeactivated(false);
         newGroup.setOwnerCustomerRef(customer);
-        CAGenerator caGenerator = createGroupCAGenerator(customer.getEmail(), groupName);
-        caGenerator.generate();
+        groupCAGenerator
+                .setCustomerEmail(customer.getEmail())
+                .setGroupName(groupName)
+                .setDaysValidity(DEFAULT_GROUP_CA_DAYS_VALIDITY)
+                .setKeySizeInBits(DEFAULT_CA_KEY_SIZE)
+                .generate();
         try {
-            newGroup.setCertificateCA(caGenerator.getCertificate().getEncoded());
+            newGroup.setCertificateCA(groupCAGenerator.getCertificate().getEncoded());
+            newGroup.setPrivateKeyCA(groupCAGenerator.getKeyPair().getPrivate().getEncoded());
         } catch (CertificateEncodingException e) {
             e.printStackTrace();
             throw new CertificateGenerationException("Internal.error");
@@ -83,15 +92,6 @@ public class GroupServiceImpl implements GroupService {
             return group;
         else
             throw new GroupNotExistsException();
-    }
-
-    private CAGenerator createGroupCAGenerator(String customerEmail, String groupName) {
-
-            return new GroupCAGenerator()
-                    .setCustomerEmail(customerEmail)
-                    .setGroupName(groupName)
-                    .setDaysValidity(DEFAULT_GROUP_CA_DAYS_VALIDITY)
-                    .setKeySizeInBits(DEFAULT_CA_KEY_SIZE);
     }
 
     private class GroupDNSource {

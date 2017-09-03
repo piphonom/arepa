@@ -1,5 +1,7 @@
 package org.piphonom.arepa.rest.response;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+
 /**
  * Created by piphonom
  */
@@ -13,11 +15,11 @@ public class DeviceRegistrationResponse extends Response {
         this.certificate = certificate;
     }
 
-    public String getCertificate() {
-        return certificate;
+    public byte[] getCertificate() {
+        return Base64.decodeBase64(certificate);
     }
 
-    public void setCertificate(String certificate) {
-        this.certificate = certificate;
+    public void setCertificate(byte[] certificate) {
+        this.certificate = Base64.encodeBase64String(certificate);
     }
 }

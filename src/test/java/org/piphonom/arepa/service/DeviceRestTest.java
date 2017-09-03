@@ -61,4 +61,18 @@ public class DeviceRestTest {
         String name = JsonPath.read(content, "$.name");
         assertEquals(expectedName, name);
     }
+
+    @Test
+    public void registerValidDevice() {
+        /**
+         * TODO: should return signed certificate
+         */
+    }
+
+    @Test
+    public void registerNotExistingDevice() {
+        /**
+         * TODO: should return HttpStatus.NOT_FOUND
+         */
+    }
 }

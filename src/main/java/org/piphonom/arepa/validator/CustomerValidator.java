@@ -1,7 +1,7 @@
 package org.piphonom.arepa.validator;
 
 import org.piphonom.arepa.dao.dataset.Customer;
-import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.exceptions.UserNotExistsException;
 import org.piphonom.arepa.service.CustomerService;
 import org.piphonom.arepa.web.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class CustomerValidator implements Validator {
         try {
             customerService.findByEmail(userForm.getEmail());
             errors.rejectValue("email", "Duplicate.userForm.email");
-        } catch (UserNotFoundException e) {}
+        } catch (UserNotExistsException e) {}
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
         if (userForm.getPassword().length() < 8 || userForm.getPassword().length() > 32) {

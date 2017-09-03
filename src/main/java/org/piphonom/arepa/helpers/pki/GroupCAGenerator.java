@@ -15,7 +15,6 @@ import java.security.cert.X509Certificate;
 @Component
 public class GroupCAGenerator implements CAGenerator {
 
-    @Autowired
     private CommonPKI commonPKI;
 
     private String customerEmail = null;
@@ -25,6 +24,11 @@ public class GroupCAGenerator implements CAGenerator {
 
     private KeyPair keyPair = null;
     private X509Certificate certificate = null;
+
+    @Autowired
+    public GroupCAGenerator(CommonPKI commonPKI) {
+        this.commonPKI = commonPKI;
+    }
 
     @Override
     public KeyPair getKeyPair() {

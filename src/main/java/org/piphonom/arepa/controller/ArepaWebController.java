@@ -91,7 +91,7 @@ public class ArepaWebController {
         List<DeviceGroup> deviceGroups;
         try {
             deviceGroups = getCustomer().getGroups();
-        } catch (UserNotFoundException e) {
+        } catch (UserNotExistsException e) {
             deviceGroups = new ArrayList<>();
             e.printStackTrace();
         }
@@ -111,7 +111,7 @@ public class ArepaWebController {
         try {
             DeviceGroup group = groupService.createGroup(getCustomer(), newGroupForm.getGroupName());
             groupService.save(group);
-        } catch (UserNotFoundException | GroupExistsException | CertificateGenerationException e) {
+        } catch (UserNotExistsException | GroupExistsException | CertificateGenerationException e) {
             e.printStackTrace();
             bindingResult.rejectValue("groupName", e.getMessage());
             return "new-group";
@@ -126,7 +126,7 @@ public class ArepaWebController {
             DeviceGroup group = groupService.getGroupByName(getCustomer(), groupName);
             List<Device> actualDevices = group.getDevices();
             model.addAttribute("devicesList", actualDevices);
-        } catch (GroupNotExistsException | UserNotFoundException e) {
+        } catch (GroupNotExistsException | UserNotExistsException e) {
             e.printStackTrace();
             bindingResult.rejectValue("error", e.getMessage());
             return "groups";
@@ -148,7 +148,7 @@ public class ArepaWebController {
             DeviceGroup group = groupService.getGroupByName(getCustomer(), newDeviceForm.getGroupName());
             Device device = deviceService.createDevice(group, newDeviceForm.getDeviceName());
             deviceService.save(device);
-        } catch (GroupNotExistsException | UserNotFoundException | DeviceExistsException e) {
+        } catch (GroupNotExistsException | UserNotExistsException | DeviceExistsException e) {
             e.printStackTrace();
             bindingResult.rejectValue("deviceName", e.getMessage());
             return "new-device";
@@ -157,7 +157,7 @@ public class ArepaWebController {
         return "redirect:/edit-group";
     }
 
-    private Customer getCustomer() throws UserNotFoundException {
+    private Customer getCustomer() throws UserNotExistsException {
         String customerEmail = securityService.findLoggedInUsername();
         return customerService.findByEmail(customerEmail);
     }

@@ -4,7 +4,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -14,7 +13,7 @@ import org.piphonom.arepa.dao.dataset.DeviceGroup;
 import org.piphonom.arepa.exceptions.CertificateGenerationException;
 import org.piphonom.arepa.exceptions.GroupExistsException;
 import org.piphonom.arepa.exceptions.GroupNotExistsException;
-import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.exceptions.UserNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -80,7 +79,7 @@ public class GroupServiceTest {
         Customer customer = null;
         try {
             customer = customerService.findByEmail(email);
-        } catch (UserNotFoundException e) {
+        } catch (UserNotExistsException e) {
             e.printStackTrace();
             fail();
         }

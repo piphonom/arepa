@@ -4,11 +4,10 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.piphonom.arepa.dao.dataset.Customer;
-import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.exceptions.UserNotExistsException;
 import org.piphonom.arepa.validator.CustomerValidator;
 import org.piphonom.arepa.web.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,7 @@ public class CustomerServiceTest {
         Customer savedCustomer = null;
         try {
             savedCustomer = customerService.findByEmail(email);
-        } catch (UserNotFoundException e) {
+        } catch (UserNotExistsException e) {
             fail();
         }
         assertEquals(email, savedCustomer.getEmail());

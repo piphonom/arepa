@@ -18,17 +18,17 @@ public class ArepaRestController {
     DeviceService deviceService;
 
     @RequestMapping(value = "/point/name/{pubID}", method = RequestMethod.GET)
-    public Response getDevicePointName(@PathVariable String pubId) throws RuntimeException {
+    public Response getDevicePointName(@PathVariable String pubId) {
         Device device = deviceService.getDeviceByPublicId(pubId);
         Response response = new DeviceRegistrationResponse();
         return response;
     }
 
     @RequestMapping(value = "/point/register/{pubID}", method = RequestMethod.PUT)
-    public Response registerDevicePoint(@PathVariable String pubId, @RequestBody DevicePointDescriptor descriptor) throws RuntimeException {
-        Device device = deviceService.registerDevice(pubId);
-        /* TODO: set certificate into response */
+    public Response registerDevicePoint(@PathVariable String pubId, @RequestBody DevicePointDescriptor descriptor) {
+        byte[] certificate = deviceService.registerDevice(pubId, descriptor.getCsr());
         DeviceRegistrationResponse response = new DeviceRegistrationResponse();
+        response.setCertificate(certificate);
         return response;
     }
 }

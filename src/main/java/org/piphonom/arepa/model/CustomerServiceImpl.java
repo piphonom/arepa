@@ -2,7 +2,7 @@ package org.piphonom.arepa.model;
 
 import org.piphonom.arepa.dao.CustomerDAO;
 import org.piphonom.arepa.dao.dataset.Customer;
-import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.exceptions.UserNotExistsException;
 import org.piphonom.arepa.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,10 +25,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer findByEmail(String email) throws UserNotFoundException {
+    public Customer findByEmail(String email) throws UserNotExistsException {
         Customer customer =  customerDAO.findByEmail(email);
         if (customer == null) {
-            throw new UserNotFoundException();
+            throw new UserNotExistsException();
         }
         return customer;
     }

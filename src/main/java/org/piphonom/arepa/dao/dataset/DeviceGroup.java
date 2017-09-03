@@ -18,6 +18,7 @@ public class DeviceGroup {
     private String name;
 
     private byte[] certificateCA;
+    private byte[] privateKeyCA;
 
     private Boolean isDeactivated;
 
@@ -54,12 +55,22 @@ public class DeviceGroup {
         this.name = name;
     }
 
+    @Column(name = "certificateCA", columnDefinition = "BLOB")
     public byte[] getCertificateCA() {
         return certificateCA;
     }
 
     public void setCertificateCA(byte[] certificateCA) {
         this.certificateCA = certificateCA;
+    }
+
+    @Column(name = "privateKeyCA", columnDefinition = "BLOB")
+    public byte[] getPrivateKeyCA() {
+        return privateKeyCA;
+    }
+
+    public void setPrivateKeyCA(byte[] privateKeyCA) {
+        this.privateKeyCA = privateKeyCA;
     }
 
     @Column(name = "isDeactivated", columnDefinition = "TINYINT", nullable = true)

@@ -22,7 +22,7 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>(body, responseStatus);
     }
 
-    HttpStatus resolveAnnotatedResponseStatus(Exception exception) {
+    private HttpStatus resolveAnnotatedResponseStatus(Exception exception) {
         ResponseStatus annotation = findMergedAnnotation(exception.getClass(), ResponseStatus.class);
         if (annotation != null) {
             return annotation.value();

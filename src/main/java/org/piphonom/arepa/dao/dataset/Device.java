@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "Device")
 public class Device {
-    private String idDevice;
+    private Integer idDevice;
     private String name;
     private String pubId;
     private State state;
@@ -29,11 +29,11 @@ public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idDevice")
-    public String getIdDevice() {
+    public Integer getIdDevice() {
         return idDevice;
     }
 
-    public void setIdDevice(String idDevice) {
+    public void setIdDevice(Integer idDevice) {
         this.idDevice = idDevice;
     }
 

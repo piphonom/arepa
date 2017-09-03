@@ -1,12 +1,12 @@
 package org.piphonom.arepa.service;
 
-import org.piphonom.arepa.exceptions.UserNotFoundException;
+import org.piphonom.arepa.exceptions.UserNotExistsException;
 
 /**
  * Created by piphonom
  */
 public interface SecurityService {
-    String findLoggedInUsername() throws UserNotFoundException;
+    String findLoggedInUsername() throws UserNotExistsException;
 
     void autoLogin(String username, String password);
 }

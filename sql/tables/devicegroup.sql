@@ -5,6 +5,7 @@ CREATE TABLE `DeviceGroup` (
   `ownerCustomerRef` int(11) DEFAULT NULL,
   `name` varchar(45) DEFAULT NULL,
   `certificateCA` blob,
+  `privateKeyCA` blob,
   `isDeactivated` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`idDeviceGroup`),
   KEY `fk_DeviceGroup_1_idx` (`ownerCustomerRef`),
