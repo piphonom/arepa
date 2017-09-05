@@ -7,12 +7,12 @@ import org.piphonom.arepa.exceptions.CertificateGenerationException;
 import org.piphonom.arepa.exceptions.GroupExistsException;
 import org.piphonom.arepa.exceptions.GroupNotExistsException;
 import org.piphonom.arepa.helpers.pki.GroupCAGenerator;
-import org.piphonom.arepa.service.CAGenerator;
+import org.piphonom.arepa.jmx.ArepaProperties;
+
 import org.piphonom.arepa.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.security.cert.CertificateEncodingException;
 import java.util.List;
 import java.util.Queue;
@@ -27,17 +27,20 @@ import java.util.stream.Collectors;
  */
 @Service
 public class GroupServiceImpl implements GroupService {
-    @Autowired
+
     private DeviceGroupDAO groupDAO;
 
-    @Autowired
-    GroupCAGenerator groupCAGenerator;
+    private GroupCAGenerator groupCAGenerator;
 
-    /**
-     * TODO: make MBean to control these values
-     */
-    private int DEFAULT_GROUP_CA_DAYS_VALIDITY = 365;
-    private int DEFAULT_CA_KEY_SIZE = 2048;
+    private ArepaProperties arepaProperties;
+
+    @Autowired
+    public GroupServiceImpl(DeviceGroupDAO groupDAO, GroupCAGenerator groupCAGenerator, ArepaProperties arepaProperties) {
+        this.groupDAO = groupDAO;
+        this.groupCAGenerator = groupCAGenerator;
+        this.arepaProperties = arepaProperties;
+    }
+
     private int DEFAULT_CA_GENERATORS_TASKS_NUMBER = 3;
 
     private ThreadFactory daemonThreadFactory = r -> {
@@ -72,8 +75,8 @@ public class GroupServiceImpl implements GroupService {
         groupCAGenerator
                 .setCustomerEmail(customer.getEmail())
                 .setGroupName(groupName)
-                .setDaysValidity(DEFAULT_GROUP_CA_DAYS_VALIDITY)
-                .setKeySizeInBits(DEFAULT_CA_KEY_SIZE)
+                .setDaysValidity(arepaProperties.getGroupCaDaysValidity())
+                .setKeySizeInBits(arepaProperties.getGroupCaKeySize())
                 .generate();
         try {
             newGroup.setCertificateCA(groupCAGenerator.getCertificate().getEncoded());

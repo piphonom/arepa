@@ -7,29 +7,30 @@ import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cert.X509v2CRLBuilder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.bc.BcX509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509v2CRLBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.piphonom.arepa.exceptions.LoadRootCAException;
+import org.piphonom.arepa.jmx.ArepaProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Created by piphonom
@@ -45,23 +46,42 @@ public final class CommonPKI {
     private PrivateKey rootCAKey;
     private X509Certificate rootCACertificate;
 
-    public CommonPKI() {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+    private ArepaProperties arepaProperties;
 
-        /**
-         * TODO: process properties depending on context
-         */
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-            Properties properties = new Properties();
-            properties.load(inputStream);
-            String keyStoreLoaction = properties.getProperty("org.piphonom.arepa.rootca.location");
-            String keyStoreAlias = properties.getProperty("org.piphonom.arepa.rootca.alias");
-            String storePassword = properties.getProperty("org.piphonom.arepa.rootca.storepass");
-            String keyPassword = properties.getProperty("org.piphonom.arepa.rootca.keypass");
-            loadRootCA(keyStoreLoaction, keyStoreAlias, storePassword, keyPassword);
-        } catch (IOException e) {
-            e.printStackTrace();
+    ThreadFactory threadFactory = r -> {
+        Thread thread = Executors.defaultThreadFactory().newThread(r);
+        thread.setDaemon(true);
+        return thread;
+    };
+
+    Runnable propertiesListener = () -> {
+        while(true) {
+            synchronized (arepaProperties) {
+                try {
+                    arepaProperties.wait();
+                    loadRootCA(arepaProperties.getRootCaStoreLocation(),
+                            arepaProperties.getRootCaAlias(),
+                            arepaProperties.getRootCaStorePassword(),
+                            arepaProperties.getRootCaKeyPassword());
+                } catch (InterruptedException | LoadRootCAException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+    };
+
+    ExecutorService propertiesListenerPool = Executors.newFixedThreadPool(1, threadFactory);
+
+    @Autowired
+    public CommonPKI(ArepaProperties arepaProperties) {
+        this.arepaProperties = arepaProperties;
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        loadRootCA(arepaProperties.getRootCaStoreLocation(),
+                   arepaProperties.getRootCaAlias(),
+                   arepaProperties.getRootCaStorePassword(),
+                   arepaProperties.getRootCaKeyPassword());
+
+        propertiesListenerPool.execute(propertiesListener);
     }
 
     PrivateKey getRootCAKey() {
