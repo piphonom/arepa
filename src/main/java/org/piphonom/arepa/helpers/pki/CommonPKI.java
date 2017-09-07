@@ -46,7 +46,7 @@ public final class CommonPKI {
     private PrivateKey rootCAKey;
     private X509Certificate rootCACertificate;
 
-    private ArepaProperties arepaProperties;
+    private final ArepaProperties arepaProperties;
 
     ThreadFactory threadFactory = r -> {
         Thread thread = Executors.defaultThreadFactory().newThread(r);
